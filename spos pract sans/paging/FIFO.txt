@@ -1,0 +1,66 @@
+import java.util.Scanner;
+
+public class PageFIFO {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        // Input frames and reference string
+        System.out.print("Enter number of frames: ");
+        int frames = sc.nextInt();
+
+        System.out.print("Enter number of pages: ");
+        int pages = sc.nextInt();
+
+        int[] ref = new int[pages];
+        System.out.println("Enter the reference string:");
+        for (int i = 0; i < pages; i++) {
+            ref[i] = sc.nextInt();
+        }
+
+        int[] memory = new int[frames];
+        for (int i = 0; i < frames; i++) {
+            memory[i] = -1;  // initialize empty
+        }
+
+        int pointer = 0, hits = 0, faults = 0;
+
+        // FIFO algorithm
+        for (int i = 0; i < pages; i++)
+         {
+            int page = ref[i];
+            boolean hit = false;
+
+            // Check if page already in memory
+            for (int j = 0; j < frames; j++) 
+           {
+                if (memory[j] == page)
+            {
+                    hits++;
+                    hit = true;
+                    break;
+                }
+            }
+
+            // If not found, replace oldest (FIFO)
+            if (!hit) {
+                memory[pointer] = page;
+                pointer = (pointer + 1) % frames;
+                faults++;
+            }
+
+            // Print current memory status
+            System.out.print("Step " + (i + 1) + " (Page " + page + "): ");
+            for (int j = 0; j < frames; j++)
+             {
+                if (memory[j] == -1)
+                    System.out.print("- ");
+                else
+                    System.out.print(memory[j] + " ");
+            }
+            System.out.println(hit ? " (#)" : " (*)");
+        }
+
+        System.out.println("\nTotal Page Faults = " + faults);
+        System.out.println("Total Hits = " + hits);
+    }
+}

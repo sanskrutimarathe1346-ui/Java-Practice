@@ -1,0 +1,166 @@
+import java.util.*;
+public class deadlock 
+{
+public static void main(String args[])
+{
+
+	Scanner sc=new Scanner(System.in);
+
+	System.out.println("enter no of processes=");
+
+	int n=sc.nextInt();
+
+	System.out.println("enter no of resources=");
+
+	int m=sc.nextInt();
+
+	int[] available=new int[m];
+
+	int[][] need=new int[n][m];
+
+	int[][] max=new int[n][m];
+
+	int[][] allocation=new int[n][m];
+
+	boolean[] finished=new boolean[n];
+
+
+	System.out.println("Enter max no.of resources=");
+
+	for(int i=0;i<n;i++)
+
+	{
+
+		for(int j=0;j<m;j++)
+
+		{
+
+			max[i][j]=sc.nextInt();
+
+		}
+
+	}
+
+	System.out.println("Enter max no.of Allocation=");
+
+	for(int i=0;i<n;i++)
+
+	{
+
+		for(int j=0;j<m;j++)
+
+		{
+
+			allocation[i][j]=sc.nextInt();
+
+		}
+
+	}
+
+
+	System.out.println("Enter available no.of resources=");
+
+	for(int i=0;i<m;i++)
+
+	{
+
+		available[i]=sc.nextInt();
+
+	}
+
+	for(int i=0;i<n;i++)
+
+	{
+
+		for(int j=0;j<m;j++)
+
+		{
+
+			need[i][j]=max[i][j]-allocation[i][j];
+
+		}
+
+	}
+     System.out.println("----Executing process---------");
+     int exec=0;
+	while(exec!=n)
+	{
+        boolean prg=false;
+        for(int i=0;i<n;i++)
+        {
+            if(!finished[i])
+            {
+                boolean canexec=true;
+                for(int j=0;j<m;j++)
+                {
+                    if(need[i][j] > available[j])
+                    {
+                          canexec=false;
+						  break;
+                    }
+                }
+				if(canexec)
+				{
+					System.out.println("Process P"+i+"is executing");
+					for(int j=0;j<m;j++)
+					{
+					available[j]=available[j]+allocation[i][j];
+					}
+					finished[i]=true;
+					exec++;
+					prg=true;
+				}
+            }
+        }
+		if(!prg)
+		{
+			System.out.println("Deadlock detected");
+			break;
+		}
+		 System.out.print("Available resources: ");
+            for (int j = 0; j < m; j++)
+			{
+                System.out.print(available[j] + " ");
+            }
+            System.out.println();
+        }
+
+
+		System.out.println("\n--- Allocation Matrix ---");
+        for (int i = 0; i < n; i++) 
+		{
+            System.out.print("P" + i + ": ");
+            for (int j = 0; j < m; j++)
+			 {
+                System.out.print(allocation[i][j] + " ");
+            }
+            System.out.println();
+        }
+		System.out.println("\n--- Max Matrix ---");
+        for (int i = 0; i < n; i++) 
+		{
+            System.out.print("P" + i + ": ");
+            for (int j = 0; j < m; j++)
+			 {
+                System.out.print(max[i][j] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println("\n--- Need Matrix ---");
+        for (int i = 0; i < n; i++) 
+		{
+            System.out.print("P" + i + ": ");
+            for (int j = 0; j < m; j++)
+			 {
+                System.out.print(need[i][j] + " ");
+            }
+            System.out.println();
+        }
+         sc.close();
+
+	}
+
+}
+
+
+

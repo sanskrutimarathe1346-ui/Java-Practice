@@ -1,0 +1,88 @@
+import java.util.Scanner;
+
+public class PageLRU {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        // Input
+        System.out.print("Enter number of frames: ");
+        int frames = sc.nextInt();
+
+        System.out.print("Enter number of pages: ");
+        int pages = sc.nextInt();
+
+        int[] ref = new int[pages];
+        System.out.println("Enter the reference string:");
+        for (int i = 0; i < pages; i++) {
+            ref[i] = sc.nextInt();
+        }
+
+        int[] memory = new int[frames];    // store pages in frames
+        int[] lastUsed = new int[frames];  // store last used time of each frame
+        for (int i = 0; i < frames; i++) {
+            memory[i] = -1;
+            lastUsed[i] = -1;
+        }
+
+        int time = 0, hits = 0, faults = 0;
+
+        for (int i = 0; i < pages; i++) {
+            int page = ref[i];
+            boolean hit = false;
+            time++;
+
+            // Check if page already in memory
+            for (int j = 0; j < frames; j++) {
+                if (memory[j] == page) {
+                    hits++;
+                    hit = true;
+                    lastUsed[j] = time;  // update usage time
+                    break;
+                }
+            }
+
+            // If not found -> FAULT
+            if (!hit) {
+                faults++;
+                int replaceIndex = -1;
+
+                // Look for empty frame first
+                for (int j = 0; j < frames; j++) {
+                    if (memory[j] == -1) {
+                        replaceIndex = j;
+                        break;
+                    }
+                }
+
+                // If no empty frame, replace least recently used
+                if (replaceIndex == -1) {
+                    int minTime = lastUsed[0];
+                    replaceIndex = 0;
+                    for (int j = 1; j < frames; j++) {
+                        if (lastUsed[j] < minTime) {
+                            minTime = lastUsed[j];
+                            replaceIndex = j;
+                        }
+                    }
+                }
+
+                // Replace page
+                memory[replaceIndex] = page;
+                lastUsed[replaceIndex] = time;
+            }
+
+            // Print current memory status
+            System.out.print("Step " + (i + 1) + " (Page " + page + "): ");
+            for (int j = 0; j < frames; j++) {
+                if (memory[j] == -1)
+                    System.out.print("- ");
+                else
+                    System.out.print(memory[j] + " ");
+            }
+            System.out.println(hit ? " (#)" : " (*)");
+        }
+
+        System.out.println("\nTotal Page Faults = " + faults);
+        System.out.println("Total Hits = " + hits);
+    }
+}
